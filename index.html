@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Scrap Optimizer</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    </script>
+    
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            margin-top: 1%;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #rowAdder {
+            margin-left: 17px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2 style="color:black">Scrap Optimizer</h2>
+    <div style="width:40%;">
+        <form>
+            <div class="row">
+                <div class="col-lg-2">
+                </div>
+                <div class="col-lg-4">
+                    <strong>Supplier Cut:</strong>
+                </div>
+                <div class="col-lg-4">
+                    <input id="inv-size" class="form-control" type="text" />
+                </div>
+                <div class="col-lg-2">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                </div>
+                <div class="col-lg-4">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <strong>
+                                Required Cuts:
+                            </strong>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <textarea class="form-control" id="lengths" rows="8"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <strong>
+                                Quantity:
+                            </strong>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <textarea class="form-control" id="quantities" rows="8"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class=" col-lg-2">
+                </div>
+                <div class="col-lg-4">
+                    <button class="btn btn-dark" id="btn-compute" type="button">
+                        <i class="bi bi-calculator"></i>
+                        Compute
+                    </button>
+                </div>
+                <div class="col-lg-6">
+
+                </div>
+            </div>
+            <div class="row mt-3 output" style="display:none">
+                <div class="col-lg-2">
+                </div>
+                <div class="col-lg-10">
+                    <strong>
+                        Suggested Cuts (Output):
+                    </strong>
+                </div>
+            </div>
+
+
+            <!--BEST FIT-->
+            <div class="row mt-3 output" style="display:none">
+                <div class="col-lg-2">
+                </div>
+                <div class="col-lg-8">
+                    <div id='alr-copied-bestfit' class="alert alert-info" role="alert" style="display:none">
+                        Copied!
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                </div>
+            </div>
+            <div class="row mt-3 output" style="display:none">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                    <table class="table" id="tbl-out-bestfit">
+                        <thead>
+                            <tr>
+                                <th>Best Fit</th>
+                                <th class="count"></th>
+                                <th class="scrap-length"></th>
+                                <th>
+                                    <button class="btn btn-info" id="btn-clipboard-bestfit" type="button">
+                                        <i class="bi bi-clipboard"></i>
+                                        Copy
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+
+            <!--WORST FIT-->
+            <div class="row mt-3 output" style="display:none">
+                <div class="col-lg-2">
+                </div>
+                <div class="col-lg-8">
+                    <div id='alr-copied-worstfit' class="alert alert-info" role="alert" style="display:none">
+                        Copied!
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                </div>
+            </div>
+            <div class="row mt-3 output" style="display:none">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                    <table class="table" id="tbl-out-worstfit">
+                        <thead>
+                            <tr>
+                                <th>Worst Fit</th>
+                                <th class="count"></th>
+                                <th class="scrap-length"></th>
+                                <th>
+                                    <button class="btn btn-info" id="btn-clipboard-worstfit" type="button">
+                                        <i class="bi bi-clipboard"></i>
+                                        Copy
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+
+            <!--FIRST FIT-->
+            <div class="row mt-3 output" style="display:none">
+                <div class="col-lg-2">
+                </div>
+                <div class="col-lg-8">
+                    <div id='alr-copied-firstfit' class="alert alert-info" role="alert" style="display:none">
+                        Copied!
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                </div>
+            </div>
+            <div class="row mt-3 output" style="display:none">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                    <table class="table" id="tbl-out-firstfit">
+                        <thead>
+                            <tr>
+                                <th>First Fit</th>
+                                <th class="count"></th>
+                                <th class="scrap-length"></th>
+                                <th>
+                                    <button class="btn btn-info" id="btn-clipboard-firstfit" type="button">
+                                        <i class="bi bi-clipboard"></i>
+                                        Copy
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+        </form>
+    </div>
+</body>
+<script src="./main.js">
+</script>
+</html>

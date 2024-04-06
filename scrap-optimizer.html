@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Scrap Optimizer</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    </script>
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            margin-top: 1%;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #rowAdder {
+            margin-left: 17px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2 style="color:black">Scrap Optimizer</h2>
+    <div style="width:40%;">
+        <form>
+            <div class="row">
+                <div class="col-lg-2">
+                </div>
+                <div class="col-lg-4">
+                    <strong>Supplier Cut:</strong>
+                </div>
+                <div class="col-lg-4">
+                    <input id="inv-size" class="form-control" type="text" />
+                </div>
+                <div class="col-lg-2">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                </div>
+                <div class="col-lg-4">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <strong>
+                                Required Cuts:
+                            </strong>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <textarea class="form-control" id="lengths" rows="8"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <strong>
+                                Quantity:
+                            </strong>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <textarea class="form-control" id="quantities" rows="8"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class=" col-lg-2">
+                </div>
+                <div class="col-lg-4">
+                    <button class="btn btn-dark" id="btn-compute" type="button">
+                        <i class="bi bi-calculator"></i>
+                        Compute
+                    </button>
+                </div>
+                <div class="col-lg-6">
+
+                </div>
+            </div>
+            <div class="row mt-3 output" style="display:none">
+                <div class="col-lg-2">
+                </div>
+                <div class="col-lg-10">
+                    <strong>
+                        Suggested Cuts (Output):
+                    </strong>
+                </div>
+            </div>
+
+
+            <!--BEST FIT-->
+            <div class="row mt-3 output" style="display:none">
+                <div class="col-lg-2">
+                </div>
+                <div class="col-lg-8">
+                    <div id='alr-copied-bestfit' class="alert alert-info" role="alert" style="display:none">
+                        Copied!
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                </div>
+            </div>
+            <div class="row mt-3 output" style="display:none">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                    <table class="table" id="tbl-out-bestfit">
+                        <thead>
+                            <tr>
+                                <th>Best Fit</th>
+                                <th class="count"></th>
+                                <th class="scrap-length"></th>
+                                <th>
+                                    <button class="btn btn-info" id="btn-clipboard-bestfit" type="button">
+                                        <i class="bi bi-clipboard"></i>
+                                        Copy
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+
+            <!--WORST FIT-->
+            <div class="row mt-3 output" style="display:none">
+                <div class="col-lg-2">
+                </div>
+                <div class="col-lg-8">
+                    <div id='alr-copied-worstfit' class="alert alert-info" role="alert" style="display:none">
+                        Copied!
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                </div>
+            </div>
+            <div class="row mt-3 output" style="display:none">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                    <table class="table" id="tbl-out-worstfit">
+                        <thead>
+                            <tr>
+                                <th>Worst Fit</th>
+                                <th class="count"></th>
+                                <th class="scrap-length"></th>
+                                <th>
+                                    <button class="btn btn-info" id="btn-clipboard-worstfit" type="button">
+                                        <i class="bi bi-clipboard"></i>
+                                        Copy
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+
+            <!--FIRST FIT-->
+            <div class="row mt-3 output" style="display:none">
+                <div class="col-lg-2">
+                </div>
+                <div class="col-lg-8">
+                    <div id='alr-copied-firstfit' class="alert alert-info" role="alert" style="display:none">
+                        Copied!
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                </div>
+            </div>
+            <div class="row mt-3 output" style="display:none">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                    <table class="table" id="tbl-out-firstfit">
+                        <thead>
+                            <tr>
+                                <th>First Fit</th>
+                                <th class="count"></th>
+                                <th class="scrap-length"></th>
+                                <th>
+                                    <button class="btn btn-info" id="btn-clipboard-firstfit" type="button">
+                                        <i class="bi bi-clipboard"></i>
+                                        Copy
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+        </form>
+    </div>
+</body>
+<script>
+    function sortBinsFirstFit(weights, binSize) {
+        //initialize variables
+        let currentBinsPointer = 0;
+        let weightsNum = weights.length;
+        let result = new Array(weightsNum);
+
+        //sort all the cuts in decreasing order
+        weights.sort((a, b) => b - a);
+
+        for (let i = 0; i < weightsNum; i++) {
+            //find the first bin that can accommodate the cut
+            let j;
+            for (j = 0; j < currentBinsPointer; j++) {
+                let isFit = result[j].reduce((a, b) => a + b, 0) + weights[i] <= binSize;
+                if (isFit) {
+                    let nextIndex = result[j].filter(Boolean).length;
+                    result[j][nextIndex] = weights[i];
+                    break;
+                }
+            }
+
+            //create a new bin if it doesn't fit any existing bin
+            if (j == currentBinsPointer) {
+                result[currentBinsPointer] = new Array(weightsNum);
+                result[currentBinsPointer][0] = weights[i];
+                currentBinsPointer++;
+            }
+        }
+
+        return result;
+    }
+
+    function sortBinsBestFit(weights, binSize) {
+        //initialize variables
+        let currentBinsPointer = 0;
+        let weightsNum = weights.length;
+        let result = new Array(weightsNum);
+
+        //sort all the cuts in decreasing order
+        weights.sort((a, b) => b - a);
+
+        for (let i = 0; i < weightsNum; i++) {
+            //find the best bin that can accommodate the cut
+            let j;
+
+            //initialize minimum space left, and index of best bin
+            let min = binSize + 1, bestBin = 0
+
+            //iterate through all cuts
+            for (j = 0; j < currentBinsPointer; j++) {
+                //get the tightest bin that can fit the cut
+                let thisBinSize = result[j].reduce((a, b) => a + b, 0);
+                let isFit = thisBinSize + weights[i] <= binSize
+                let isLessThanMin = binSize - (thisBinSize + weights[i]) < min
+                if (isFit && isLessThanMin) {
+                    bestBin = j;
+                    min = binSize - (thisBinSize + weights[i]);
+                }
+            }
+
+            //create a new bin if it doesn't fit any of the existing bins
+            if (min == binSize + 1) {
+                result[currentBinsPointer] = new Array(weightsNum);
+                result[currentBinsPointer][0] = weights[i];
+                currentBinsPointer++;
+            } else { //assign to best bin
+                result[bestBin][result[bestBin].filter(Boolean).length] = weights[i];
+            }
+        }
+
+        return result;
+    }
+
+    function sortBinsWorstFit(weights, binSize) {
+        //initialize variables
+        let currentBinsPointer = 0;
+        let weightsNum = weights.length;
+        let result = new Array(weightsNum);
+
+        //sort all the cuts in decreasing order
+        weights.sort((a, b) => b - a);
+
+        for (let i = 0; i < weightsNum; i++) {
+            //find the best bin that can accommodate the cut
+            let j;
+
+            //initialize maximum space left, and index of worst bin
+            let max = -1, worstBin = 0
+
+            //iterate through all cuts
+            for (j = 0; j < currentBinsPointer; j++) {
+                //get the bin with the most empty space that can fit the cut
+                let thisBinSize = result[j].reduce((a, b) => a + b, 0);
+                let isFit = thisBinSize + weights[i] <= binSize
+                let isGreaterThanMax = binSize - (thisBinSize + weights[i]) > max
+                if (isFit && isGreaterThanMax) {
+                    worstBin = j;
+                    max = binSize - (thisBinSize + weights[i]);
+                }
+            }
+
+            //create a new bin if it doesn't fit any of the existing bins
+            if (max == -1) {
+                result[currentBinsPointer] = new Array(weightsNum);
+                result[currentBinsPointer][0] = weights[i];
+                currentBinsPointer++;
+            } else { //assign to worst bin
+                result[worstBin][result[worstBin].filter(Boolean).length] = weights[i];
+            }
+        }
+
+        return result;
+    }
+
+    function getTableContents($table) {
+        let tableContents = '';
+        $table.find('tbody tr').each(function () {
+            $(this).find('td').each(function () {
+                tableContents += $(this).text() + '\t';
+            });
+            tableContents += '\n';
+        });
+        return tableContents;
+    }
+
+    function createTableOutput(data, materialSize, $table) {
+        let rowCount = data.filter(Boolean).length;
+        let totalLength = data.map(n => n.reduce((a, b) => a + b, 0)).reduce((a, b) => a + b, 0);
+        let scrapLength = (rowCount * materialSize - totalLength) / 100;
+
+        $table.find('th.count').text("Qty: " + rowCount);
+        $table.find('th.scrap-length').text("Scrap: " + scrapLength.toFixed(2));
+
+        let tbody = '';
+        for (let i = 0; i < rowCount; i++) {
+            if (data)
+                tbody += '<tr>';
+            for (let j = 0; j < data[i].filter(Boolean).length; j++) {
+                tbody += '<td>' + parseFloat(data[i][j]).toFixed(2) / 100 + '</td>';
+            }
+            tbody += '</tr>';
+        }
+
+        $table.find('tbody').html(tbody);
+    }
+
+    function copyToClipboard($table) {
+        if (navigator.clipboard) {
+            let copyText = getTableContents($table);
+            navigator.clipboard.writeText(copyText).catch(function (e) {
+                console.log(e)
+            });
+        }
+    }
+
+    function showCopiedAlert($alert) {
+        $alert.fadeTo(2000, 500).slideUp(500, function () {
+            $alert.slideUp(500);
+        });
+    }
+
+    $('#btn-compute').click(function () {
+        let dataBestFit;
+        let dataFirstFit;
+        let dataWorstFit;
+
+        let supply = $('#inv-size').val() * 100;
+        try {
+            let cuts = $('#lengths').val().trim().split('\n').map(n => Math.ceil(parseFloat(n) * 100));
+            let quantities = $('#quantities').val().trim().split('\n').map(n => parseInt(n));
+
+            if (cuts.length != quantities.length) {
+                alert("Please ensure the number of rows are equal.");
+                return;
+            }
+
+            let allCuts = new Array(quantities.reduce((a, b) => a + b));
+            let allCutsPointer = 0;
+            for (let i = 0; i < cuts.length; i++) {
+                for (let j = 0; j < quantities[i]; j++) {
+                    allCuts[allCutsPointer] = cuts[i];
+                    allCutsPointer++;
+                }
+            }
+            dataBestFit = sortBinsBestFit(allCuts, supply);
+            dataFirstFit = sortBinsFirstFit(allCuts, supply);
+            dataWorstFit = sortBinsWorstFit(allCuts, supply);
+        } catch (e) {
+            alert("Unable to compute, please check your inputs.");
+            console.log(e);
+        }
+
+        createTableOutput(dataBestFit, supply, $('table#tbl-out-bestfit'));
+        createTableOutput(dataFirstFit, supply, $('table#tbl-out-firstfit'));
+        createTableOutput(dataWorstFit, supply, $('table#tbl-out-worstfit'));
+
+        $('div.output').show();
+    });
+
+    $('#btn-clipboard-firstfit').click(function () {
+        copyToClipboard($('table#tbl-out-firstfit'));
+        showCopiedAlert($('#alr-copied-firstfit'));
+    });
+
+    $('#btn-clipboard-bestfit').click(function () {
+        copyToClipboard($('table#tbl-out-bestfit'));
+        showCopiedAlert($('#alr-copied-bestfit'));
+    });
+
+    $('#btn-clipboard-worstfit').click(function () {
+        copyToClipboard($('table#tbl-out-worstfit'));
+        showCopiedAlert($('#alr-copied-worstfit'));
+    });
+
+</script>
+
+</html>
